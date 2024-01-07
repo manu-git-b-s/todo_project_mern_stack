@@ -5,9 +5,12 @@ import { GrDocumentUpdate } from "react-icons/gr";
 interface TodoCardProps {
   title: string;
   body: string;
+  id: number;
+  deleteFunc: (id: number) => void;
+  displayPositionFunc: (postion: string) => void;
 }
 
-const TodoCard = ({ title, body }: TodoCardProps) => {
+const TodoCard = ({ title, body, id, deleteFunc, displayPositionFunc }: TodoCardProps) => {
   return (
     <div className="todo-card p-3">
       <div>
@@ -15,10 +18,20 @@ const TodoCard = ({ title, body }: TodoCardProps) => {
         <p className="todo-card-p">{body.split("", 77)}</p>
       </div>
       <div className="d-flex justify-content-around">
-        <div className="card-icon-head px-2 py-1">
+        <div
+          className="card-icon-head px-2 py-1"
+          onClick={() => {
+            displayPositionFunc("block");
+          }}
+        >
           <GrDocumentUpdate className="card-icons" /> Update
         </div>
-        <div className="card-icon-head px-2 py-1 text-danger">
+        <div
+          className="card-icon-head px-2 py-1 text-danger"
+          onClick={() => {
+            deleteFunc(id);
+          }}
+        >
           <AiFillDelete className="card-icons del" /> Delete
         </div>
       </div>
