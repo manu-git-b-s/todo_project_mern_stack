@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Todo.css";
 import TodoCard from "./TodoCard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TodoUpdate from "./TodoUpdate";
+import axios from "axios";
 
 interface Todo {
   title: string;
@@ -11,6 +12,7 @@ interface Todo {
 }
 
 const Todo = () => {
+  const id = sessionStorage.getItem("id");
   const [inputs, setInputs] = useState<Todo>({ title: "", body: "" });
   const [Array, setArray] = useState<Todo[] | []>([]);
 
@@ -26,19 +28,31 @@ const Todo = () => {
     setInputs({ ...inputs, [name]: value });
   };
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     if (inputs.title === "" || inputs.body === "") {
       toast.error("Title or body should not be empty!");
     } else {
-      setArray([...Array, inputs]);
-      setInputs({ title: "", body: "" });
-      toast.success("Your task is added");
+      if (id) {
+        await axios
+          .post("http://localhost:8080/api/v2/add-task", { title: inputs.title, body: inputs.body, id: id })
+          .then((response) => {
+            console.log(response);
+          });
+        setInputs({ title: "", body: "" });
+        toast.success("Your task is added");
+      } else {
+        setArray([...Array, inputs]);
+        setInputs({ title: "", body: "" });
+        toast.error("Your task is not saved! Please Sign up");
+      }
     }
   };
 
-  const deleteHandler = (id: number) => {
-    Array.splice(id, 1);
-    setArray([...Array]);
+  const deleteHandler = async (cardId: number) => {
+    console.log(`http://localhost:8080/api/v2/delete-task/${cardId}`);
+    await axios.delete(`http://localhost:8080/api/v2/delete-task/${cardId}`, { data: { id: id } }).then(() => {
+      toast.success("Task deleted successfully");
+    });
   };
 
   const display = (value: string) => {
@@ -47,6 +61,14 @@ const Todo = () => {
       todoDiv.style.display = value;
     }
   };
+
+  useEffect(() => {
+    const fetch = async () => {
+      await axios.get(`http://localhost:8080/api/v2/get-tasks/${id}`).then((response) => setArray(response.data.list));
+    };
+
+    fetch();
+  }, [submitHandler, id]);
 
   return (
     <>
@@ -82,12 +104,13 @@ const Todo = () => {
           <div className="container-fluid">
             <div className="row">
               {Array &&
-                Array.map((item: Todo, index: number) => (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                Array.map((item: any, index: number) => (
                   <div className="col-lg-3 col-10  mx-5 my-2" key={index}>
                     <TodoCard
                       title={item.title}
                       body={item.body}
-                      id={index}
+                      id={item._id}
                       deleteFunc={deleteHandler}
                       displayPositionFunc={display}
                     />
