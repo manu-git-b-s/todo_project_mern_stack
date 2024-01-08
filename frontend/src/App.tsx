@@ -6,8 +6,20 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Register from "./components/register/Register";
 import Login from "./components/register/Login";
 import Todo from "./components/todo/Todo";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "./store/index";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const id: string | null = sessionStorage.getItem("id");
+    if (id) {
+      dispatch(authActions.login());
+    }
+  }, []);
+
   return (
     <>
       <Router>

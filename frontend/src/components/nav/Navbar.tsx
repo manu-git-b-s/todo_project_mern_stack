@@ -1,8 +1,22 @@
 import "./Navbar.css";
 import { GiWhiteBook } from "react-icons/gi";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { authActions } from "../../store";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isLoggedIn = useSelector((state: any) => state.isLoggedIn);
+  console.log(isLoggedIn);
+
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    sessionStorage.clear();
+    dispatch(authActions.logout());
+  };
+
   return (
     <div>
       <nav className="navbar navbar-expand-lg">
@@ -39,21 +53,27 @@ const Navbar = () => {
                   Todo
                 </Link>
               </li>
-              <li className="nav-item mx-2">
-                <Link className="nav-link active btn-nav" aria-current="page" to="/register">
-                  Sign Up
-                </Link>
-              </li>
-              <li className="nav-item mx-2">
-                <Link className="nav-link active btn-nav" aria-current="page" to="/login">
-                  Login
-                </Link>
-              </li>
-              <li className="nav-item mx-2">
-                <Link className="nav-link active btn-nav" aria-current="page" to="/">
-                  Logout
-                </Link>
-              </li>
+              {!isLoggedIn && (
+                <>
+                  <li className="nav-item mx-2">
+                    <Link className="nav-link active btn-nav" aria-current="page" to="/register">
+                      Sign Up
+                    </Link>
+                  </li>
+                  <li className="nav-item mx-2">
+                    <Link className="nav-link active btn-nav" aria-current="page" to="/login">
+                      Login
+                    </Link>
+                  </li>
+                </>
+              )}
+              {isLoggedIn && (
+                <li className="nav-item mx-2" onClick={logoutHandler}>
+                  <Link className="nav-link active btn-nav" aria-current="page" to="/">
+                    Logout
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>
