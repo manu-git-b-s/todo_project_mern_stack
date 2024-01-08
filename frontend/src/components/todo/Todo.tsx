@@ -11,8 +11,10 @@ interface Todo {
   body: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let toUpdateArray: any = [];
+const id = sessionStorage.getItem("id");
 const Todo = () => {
-  const id = sessionStorage.getItem("id");
   const [inputs, setInputs] = useState<Todo>({ title: "", body: "" });
   const [Array, setArray] = useState<Todo[] | []>([]);
 
@@ -28,6 +30,7 @@ const Todo = () => {
     setInputs({ ...inputs, [name]: value });
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const submitHandler = async () => {
     if (inputs.title === "" || inputs.body === "") {
       toast.error("Title or body should not be empty!");
@@ -48,34 +51,44 @@ const Todo = () => {
     }
   };
 
+  useEffect(() => {
+    if (id) {
+      const fetch = async () => {
+        await axios
+          .get(`http://localhost:8080/api/v2/get-tasks/${id}`)
+          .then((response) => setArray(response.data.list));
+      };
+      fetch();
+    }
+  }, [submitHandler]);
+
   const deleteHandler = async (cardId: number) => {
-    console.log(`http://localhost:8080/api/v2/delete-task/${cardId}`);
-    await axios.delete(`http://localhost:8080/api/v2/delete-task/${cardId}`, { data: { id: id } }).then(() => {
-      toast.success("Task deleted successfully");
-    });
+    if (id) {
+      await axios.delete(`http://localhost:8080/api/v2/delete-task/${cardId}`, { data: { id: id } }).then(() => {
+        toast.success("Task deleted successfully");
+      });
+    } else {
+      toast.error("Please signup first");
+    }
   };
 
-  const display = (value: string) => {
+  const displayHandler = (value: string) => {
     const todoDiv = document.getElementById("todo-update");
     if (todoDiv) {
       todoDiv.style.display = value;
     }
   };
 
-  useEffect(() => {
-    const fetch = async () => {
-      await axios.get(`http://localhost:8080/api/v2/get-tasks/${id}`).then((response) => setArray(response.data.list));
-    };
-
-    fetch();
-  }, [submitHandler, id]);
+  const updateHandler = (id: number) => {
+    toUpdateArray = Array[id];
+  };
 
   return (
     <>
       <div className="todo">
         <ToastContainer />
         <div className="todo-main container d-flex flex-column justify-content-center align-items-center my-4 ">
-          <div className="d-flex flex-column todo-inputs-div w-50 p-1">
+          <div className="d-flex flex-column todo-inputs-div w-100 p-1">
             <input
               type="text"
               placeholder="TITLE"
@@ -94,7 +107,7 @@ const Todo = () => {
               name="body"
             />
           </div>
-          <div className="d-flex justify-content-end w-50 my-3">
+          <div className="w-lg-50 w-100 d-flex justify-content-end w-50 my-3">
             <button className="home-btn px-2 py-1" onClick={submitHandler}>
               Add
             </button>
@@ -106,13 +119,15 @@ const Todo = () => {
               {Array &&
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 Array.map((item: any, index: number) => (
-                  <div className="col-lg-3 col-10  mx-5 my-2" key={index}>
+                  <div className="col-lg-3 col-11  mx-3 mx-lg-5 my-2" key={index}>
                     <TodoCard
                       title={item.title}
                       body={item.body}
                       id={item._id}
                       deleteFunc={deleteHandler}
-                      displayPositionFunc={display}
+                      displayPositionFunc={displayHandler}
+                      updateId={index}
+                      toBeUpdate={updateHandler}
                     />
                   </div>
                 ))}
@@ -122,7 +137,7 @@ const Todo = () => {
       </div>
       <div className="todo-update" id="todo-update">
         <div className="container update">
-          <TodoUpdate displayPositionFunc={display} />
+          <TodoUpdate displayPositionFunc={displayHandler} updateObj={toUpdateArray} />
         </div>
       </div>
     </>

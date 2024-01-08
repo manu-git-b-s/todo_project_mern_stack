@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 const Navbar = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isLoggedIn = useSelector((state: any) => state.isLoggedIn);
-  console.log(isLoggedIn);
 
   const dispatch = useDispatch();
 
@@ -55,24 +54,30 @@ const Navbar = () => {
               </li>
               {!isLoggedIn && (
                 <>
-                  <li className="nav-item mx-2">
-                    <Link className="nav-link active btn-nav" aria-current="page" to="/register">
-                      Sign Up
-                    </Link>
-                  </li>
-                  <li className="nav-item mx-2">
-                    <Link className="nav-link active btn-nav" aria-current="page" to="/login">
-                      Login
-                    </Link>
-                  </li>
+                  <div className="d-flex">
+                    <li className="nav-item mx-2">
+                      <Link className="nav-link active btn-nav p-2" aria-current="page" to="/register">
+                        Sign Up
+                      </Link>
+                    </li>
+                  </div>
+                  <div className="d-flex">
+                    <li className="nav-item mx-2">
+                      <Link className="nav-link active btn-nav p-2 my-lg-0 my-2" aria-current="page" to="/login">
+                        Login
+                      </Link>
+                    </li>
+                  </div>
                 </>
               )}
               {isLoggedIn && (
-                <li className="nav-item mx-2" onClick={logoutHandler}>
-                  <Link className="nav-link active btn-nav" aria-current="page" to="/">
-                    Logout
-                  </Link>
-                </li>
+                <div className="d-flex">
+                  <li className="nav-item mx-2 " onClick={logoutHandler}>
+                    <Link className="nav-link active btn-nav p-2" aria-current="page" to="/">
+                      Logout
+                    </Link>
+                  </li>
+                </div>
               )}
             </ul>
           </div>

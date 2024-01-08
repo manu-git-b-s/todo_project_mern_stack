@@ -18,12 +18,9 @@ const createTaskController = async (req, res) => {
 
 const updateTaskController = async (req, res) => {
   try {
-    const { email, body, title } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      const list = await List.findByIdAndUpdate(req.params.id, { title, body });
-      await list.save().then(() => res.status(200).json({ message: "Task Updated" }));
-    }
+    const { body, title } = req.body;
+    const list = await List.findByIdAndUpdate(req.params.id, { title, body });
+    await list.save().then(() => res.status(200).json({ message: "Task Updated" }));
   } catch (error) {
     console.log(error);
   }

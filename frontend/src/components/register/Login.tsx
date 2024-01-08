@@ -32,11 +32,11 @@ const Login = () => {
         {/* <ToastContainer /> */}
         <div className="container">
           <div className="row">
-            <div className="col-lg-4 column d-flex justify-content-center align-items-center">
+            <div className="col-lg-4 column d-none d-lg-flex justify-content-center align-items-center">
               <HeadingComp heading1={"Sign"} heading2={"In"} />
             </div>
             <div className="col-lg-8 column d-flex justify-content-center align-items-center">
-              <div className="d-flex flex-column w-100 p-5">
+              <div className="d-flex flex-column w-100 p-3">
                 <input
                   className="p-2 my-3 input-sign-up"
                   name="email"

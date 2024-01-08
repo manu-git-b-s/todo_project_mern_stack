@@ -8,9 +8,11 @@ interface TodoCardProps {
   id: number;
   deleteFunc: (id: number) => void;
   displayPositionFunc: (postion: string) => void;
+  toBeUpdate: (id: number) => void;
+  updateId: number;
 }
 
-const TodoCard = ({ title, body, id, deleteFunc, displayPositionFunc }: TodoCardProps) => {
+const TodoCard = ({ title, body, id, deleteFunc, displayPositionFunc, updateId, toBeUpdate }: TodoCardProps) => {
   return (
     <div className="todo-card p-3">
       <div>
@@ -22,6 +24,7 @@ const TodoCard = ({ title, body, id, deleteFunc, displayPositionFunc }: TodoCard
           className="card-icon-head px-2 py-1"
           onClick={() => {
             displayPositionFunc("block");
+            toBeUpdate(updateId);
           }}
         >
           <GrDocumentUpdate className="card-icons" /> Update
